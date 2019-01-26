@@ -2,14 +2,13 @@ from SublimeLinter.lint import PythonLinter, util
 
 
 class Bandit(PythonLinter):
-    cmd = ('bandit', '${args}', '-n', '1', '-f', 'txt', '-')
-    regex = (
-        r'^>>\sIssue:\s\[(?P<code>[B]\d+):.+\]\s(?P<message>.+)$\r?\n'
-        r'^.*Severity:\s(?:(?P<error>High)|(?P<warning>(Medium|Low))).*$\r?\n'
-        r'^.*Location:.*:(?P<line>\d+)$\r?\n'
-    )
-    multiline = True
-    error_stream = util.STREAM_BOTH
+    cmd = ('bandit', '${args}', '-n', '1', '-f', 'custom',
+           '--msg-template', '[{line}][{test_id}][{severity}] {msg}', '-')
+    regex = (r'^\[(?P<line>\d+)\]'
+             r'\[(?P<code>[B]\d+)\]'
+             r'\[(?:(?P<error>HIGH)|(?P<warning>(MEDIUM|LOW)))\]'
+             r'\s(?P<message>.+)$')
+    error_stream = util.STREAM_STDOUT
     defaults = {
         'selector': 'source.python',
         '--tests,': '',
